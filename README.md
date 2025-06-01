@@ -30,11 +30,20 @@ QikList is a minimal and responsive todo application built with React. It allows
 
 ---
 
+## 🧠 Inspiration
+Built to simplify task management while learning and practicing React, state handling, and UI/UX design
+
+## 🤝 Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss.
+
 ## 🛠️ Getting Started
 
 ### 1. Clone the repo
 
 ```bash
-git clone 
-cd qiklist
+git clone https://github.com/Ankita5912/To-Do-List.git
+cd to-do-list
+npm install
+npm start
+
 
