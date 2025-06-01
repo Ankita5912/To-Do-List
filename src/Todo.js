@@ -5,13 +5,11 @@ import { useEffect, useState } from "react";
 import { TiTick } from "react-icons/ti";
 
 function ListWrapper({ task, priority, oncomplete, status, remove, edit }) {
-  
   const priorityColors = {
     high: "bg-red-700 text-white",
     medium: "bg-yellow-500 text-white",
     low: "bg-[#6f5794] text-white",
   };
-  
 
   const priorityClass = priorityColors[priority.toLowerCase()] || "bg-gray-300 text-black";
 
@@ -20,9 +18,9 @@ function ListWrapper({ task, priority, oncomplete, status, remove, edit }) {
       className={`py-2.5 px-4 rounded-sm shadow-sm w-full text-white shadow-[#cbd1ec] flex justify-between ${priorityClass}`}
     >
       <h1 className="font-Manrope text-base">{task}</h1>
-      <div className="flex gap-5">
+      <div className="flex md:gap-5 gap-3">
         <button onClick={edit}>
-          <FaRegEdit size={20} fill="white"/>
+          <FaRegEdit size={20} fill="white" />
         </button>
         <button onClick={remove}>
           <MdDeleteOutline size={22} fill="white" />
@@ -52,9 +50,15 @@ function Todo() {
   const [sortOrder, setSortOrder] = useState("asc");
 
   useEffect(() => {
-    const data = localStorage.getItem("TodoList");
-    if (data) setList(JSON.parse(data));
+    try {
+      const data = JSON.parse(localStorage.getItem("TodoList"));
+      if (Array.isArray(data)) setList(data);
+    } catch (err) {
+      console.error("Error parsing localStorage data:", err);
+      localStorage.removeItem("TodoList");
+    }
   }, []);
+  
 
   useEffect(() => {
     localStorage.setItem("TodoList", JSON.stringify(List));
@@ -112,17 +116,17 @@ function Todo() {
   return (
     <div className="bg-gradient-to-br from-[#909acf] to-[#967eba] h-screen">
       <nav className="flex justify-between p-4 bg-white shadow-md shadow-slate-500">
-        <div className="font-semibold font-myFont md:text-3xl text-lg text-[#59437a] tracking-wider">
+        <div className="font-semibold font-myFont md:text-3xl text-2xl text-[#59437a] tracking-wider">
           QikList
         </div>
       </nav>
 
       <div className="flex flex-col pt-10 items-center h-auto">
-        <h1 className="text-white font-PlusJakartaSans text-2xl font-semibold tracking-wide text-center leading-relaxed">
+        <h1 className="text-white font-PlusJakartaSans md:text-2xl text-xl font-semibold tracking-wide text-center leading-relaxed">
           Let’s make a quick list
         </h1>
 
-        <div className="h-auto w-4/7 p-5 my-5 shadow-lg shadow-slate-500 bg-white flex flex-col gap-5 rounded-md">
+        <div className="h-auto w-4/7 md:p-5 p-3 my-5 md:mx-auto mx-2 shadow-lg shadow-slate-500 bg-white flex flex-col gap-5 rounded-md">
           <div className="flex relative shadow-md rounded shadow-[#cbd1ec] border">
             <input
               type="text"
@@ -141,7 +145,7 @@ function Todo() {
 
             <div className="flex gap-1">
               <select
-                className="py-2.5 px-1 outline-none rounded-md bg-[#6f5794] border-r font-Manrope text-white text-center"
+                className="md:py-2.5 py-1.5 md:px-1 px-0.5 outline-none rounded-md bg-[#6f5794] border-r font-Manrope text-white text-center"
                 name="priority"
                 value={Listitems.priority}
                 onChange={handleonChange}
@@ -152,7 +156,7 @@ function Todo() {
               </select>
 
               <button
-                className="bg-[#6f5794] font-Manrope text-white p-2 w-20 rounded-md rounded-r"
+                className="bg-[#6f5794] font-Manrope text-white md:p-2 md:w-20 py-1.5 px-0.5 w-12 rounded-md rounded-r"
                 onClick={add}
               >
                 Add
