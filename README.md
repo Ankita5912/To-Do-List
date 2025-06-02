@@ -26,7 +26,8 @@ QikList is a minimal and responsive todo application built with React. It allows
 
 ## 📸 Preview
 
-![QikList Screenshot](preview.png) <!-- Replace this with actual screenshot if available -->
+ <!-- Replace this with actual screenshot if available -->
+![Screenshot 2025-06-01 215143](https://github.com/user-attachments/assets/f441f994-af35-42fe-95a2-445cfc7e0dc4)
 
 ---
 
