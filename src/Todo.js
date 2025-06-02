@@ -1,4 +1,4 @@
-import { GrSearch } from "react-icons/gr";
+// import { GrSearch } from "react-icons/gr";
 import { FaRegEdit } from "react-icons/fa";
 import { MdDeleteOutline } from "react-icons/md";
 import { useEffect, useState } from "react";
@@ -39,13 +39,20 @@ function ListWrapper({ task, priority, oncomplete, status, remove, edit }) {
 }
 
 function Todo() {
+  //state variable for the task list
   const [List, setList] = useState([]);
+
+  //state variable for individual list to change on the onchange event and then add  to the list -- it is an object
   const [Listitems, setlistitems] = useState({
     task: "",
     priority: "low",
     status: false,
   });
+
+  //variable to set the index for update task and then using it on add function to avoid duplicate task add after editing
   const [editIndex, seteditIndex] = useState(null);
+
+  //variables to set the filter and sort status of filter and sort buttons
   const [filter, setFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState("asc");
 
@@ -61,9 +68,11 @@ function Todo() {
   
 
   useEffect(() => {
-    localStorage.setItem("TodoList", JSON.stringify(List));
+    if(List.length > 0 ) localStorage.setItem("TodoList", JSON.stringify(List));
   }, [List]);
 
+
+  //storing the items in listitems object on onchange event
   const handleonChange = (e) => {
     const { name, value } = e.target;
     setlistitems({
@@ -72,6 +81,7 @@ function Todo() {
     });
   };
 
+  //function to add task and avoid duplicate when editting based on editIndex that is set true in edit function
   const add = () => {
     if (Listitems.task.trim() === "") return alert("Enter your task");
 
@@ -87,31 +97,38 @@ function Todo() {
     setlistitems({ task: "", priority: "low", status: false });
   };
 
-  const updateStatus = (index) => {
+  //function to update the status of task that if it is completed or not
+  const updateStatus = (originalIndex) => {
     const updatedList = [...List];
-    updatedList[index].status = !updatedList[index].status;
+    updatedList[originalIndex].status = !updatedList[originalIndex].status;
     setList(updatedList);
   };
 
-  const ondelete = (index) => {
+  //deleting a task based on the list index not the filtered list index
+  const ondelete = (originalIndex) => {
     const updatedList = [...List];
-    updatedList.splice(index, 1);
+    updatedList.splice(originalIndex, 1);
     setList(updatedList);
   };
 
-  const edit = (index) => {
-    setlistitems({ ...List[index] });
-    seteditIndex(index);
+  //function to edit a task based on list index not the filtered list index
+  const edit = (originalIndex) => {
+    setlistitems({ ...List[originalIndex] });
+    seteditIndex(originalIndex);
   };
 
-  const filteredList = List.filter((item) => {
+  //setting up a new list by applying filter and then sort on the original list that come from local storage
+  const filteredList = List.map((item, originalIndex) => ({ ...item, originalIndex }))
+    .filter((item) => {
     if (filter === "completed") return item.status;
     return true;
-  }).sort((a, b) => {
+    })
+    .sort((a, b) => {
     return sortOrder === "asc"
       ? a.task.localeCompare(b.task)
       : b.task.localeCompare(a.task);
   });
+
 
   return (
     <div className="bg-gradient-to-br from-[#909acf] to-[#967eba] h-screen">
@@ -121,7 +138,7 @@ function Todo() {
         </div>
       </nav>
 
-      <div className="flex flex-col pt-10 items-center h-auto">
+      <div className="flex flex-col pt-10 items-center h-auto bg-[]">
         <h1 className="text-white font-PlusJakartaSans md:text-2xl text-xl font-semibold tracking-wide text-center leading-relaxed">
           Let’s make a quick list
         </h1>
@@ -130,7 +147,7 @@ function Todo() {
           <div className="flex relative shadow-md rounded shadow-[#cbd1ec] border">
             <input
               type="text"
-              className="w-full placeholder-opacity-35 font-Manrope text-base font-medium placeholder-[#6f5794] pl-8 py-2.5 rounded-sm outline-0"
+              className="w-full placeholder-opacity-35 font-Manrope text-base font-medium placeholder-[#6f5794] p-4 py-2.5 rounded-sm outline-0"
               placeholder="Enter a task..."
               name="task"
               value={Listitems.task}
@@ -139,9 +156,9 @@ function Todo() {
                 if (e.key === "Enter") add();
               }}
             />
-            <button className="text-black p-2 py-3 absolute" style={{ cursor: "pointer" }}>
+            {/* <button className="text-black p-2 py-3 absolute" style={{ cursor: "pointer" }}>
               <GrSearch color="#6f5794" size={20} />
-            </button>
+            </button> */}
 
             <div className="flex gap-1">
               <select
@@ -190,9 +207,9 @@ function Todo() {
                 task={item.task}
                 priority={item.priority}
                 status={item.status}
-                oncomplete={() => updateStatus(index)}
-                remove={() => ondelete(index)}
-                edit={() => edit(index)}
+                oncomplete={() => updateStatus(item.originalIndex)}
+                remove={() => ondelete(item.originalIndex)}
+                edit={() => edit(item.originalIndex)}
               />
             ))}
           </div>
